@@ -5,7 +5,7 @@ public interface INameNode extends Remote{
 
 	/* OpenFileResponse openFile(OpenFileRequest) */
 	/* Method to open a file given file name with read-write flag*/
-	byte[] openFile(byte[] inp) throws RemoteException;
+	byte[] openFile(String filename) throws RemoteException;
 
 	/* CloseFileResponse closeFile(CloseFileRequest) */
 	byte[] closeFile(byte[] inp ) throws RemoteException;

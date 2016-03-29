@@ -1,6 +1,19 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.Random;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.rmi.RemoteException;
+
 
 public class Client {
 
@@ -11,6 +24,14 @@ public class Client {
    private static String GET = "get";
    private static String PUT = "put";
    private static String LIST = "list";
+   private int blockSize = 33554432; // 32 Mb
+
+	byte[] private OpenFileRequestMaker(String filename) {
+   		Hdfs.OpenFileRequest.Builder openFileRequest = Hdfs.OpenFileRequest.newBuilder();
+    	openFileRequest.setFileName(name);
+    	openFileRequest.setForRead(flag);
+    	return openFileRequest.build().toByteArray();
+    }
 
       public static void main(String[] args){
 
@@ -26,10 +47,30 @@ public class Client {
 		  String fileName = scanner.next();
 		  System.err.println(fileName);
 	       }
+	      
 	       else if (command.equals(PUT)){
 		  String fileName = scanner.next();
 		  System.err.println(fileName);
-	       }
+
+		  //openfile
+		  byte[] openFileRequestBytes = Hdfs.OpenFileRequest.newBuilder().setFileName(fileName).setForRead(false).build().toByteArray();
+		  byte[] openFileResponseBytes = stub.openFile(openFileRequestBytes);
+		  Hdfs.OpenFileResponse openFileResponse = Hdfs.OpenFileResponse.parseFrom(openFileResponseBytes);
+
+		  if(openFileResponse.getStatus()) {
+		  	byte[] readBytes = new byte[blockSize];
+		  	int numBytes;
+
+            FileInputStream input = new FileInputStream(new File(filename));
+            while ((read_bytes = fis.read(w)) != -1) {
+				byte[] assignBlockRequestBytes = Hdfs.AssignBlockRequest.newBuilder().setHandle(openFileResponse.getHandle()).build().toByteArray();
+				byte[] assignBlockResponseBytes = tempStub.assignBlock(assignBlockRequestBytes);
+				Hdfs.AssignBlockResponse assignBlockResponse = Hdfs.AssignBlockResponse.parseFrom(assignBlockResponseBytes);
+            }
+
+		  }
+
+	      }
 	       else if (command.equals(LIST)){
 		  System.err.println(LIST);
 	       }

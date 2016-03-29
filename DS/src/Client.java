@@ -26,13 +26,6 @@ public class Client {
    private static String LIST = "list";
    private int blockSize = 33554432; // 32 Mb
 
-	byte[] private OpenFileRequestMaker(String filename) {
-   		Hdfs.OpenFileRequest.Builder openFileRequest = Hdfs.OpenFileRequest.newBuilder();
-    	openFileRequest.setFileName(name);
-    	openFileRequest.setForRead(flag);
-    	return openFileRequest.build().toByteArray();
-    }
-
       public static void main(String[] args){
 
 	 Scanner scanner = new Scanner(System.in);

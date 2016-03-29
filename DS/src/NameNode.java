@@ -38,7 +38,7 @@ public class NameNode implements INameNode {
          for(int i : handle_block_map.get(filename))
              openFileResponse.addBlockNums(i);
           fileNum++;
-         return openFileResponseBuilder.build().toByteArray()
+         return openFileResponseBuilder.build().toByteArray();
       }
       catch(Exception e){System.out.println("Unable to open file at name node\n");}
 

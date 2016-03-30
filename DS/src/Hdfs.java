@@ -4578,19 +4578,15 @@ public final class Hdfs {
   public interface BlockLocationRequestOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
-    // repeated int32 blockNums = 1;
+    // optional int32 blockNum = 1;
     /**
-     * <code>repeated int32 blockNums = 1;</code>
+     * <code>optional int32 blockNum = 1;</code>
      */
-    java.util.List<java.lang.Integer> getBlockNumsList();
+    boolean hasBlockNum();
     /**
-     * <code>repeated int32 blockNums = 1;</code>
+     * <code>optional int32 blockNum = 1;</code>
      */
-    int getBlockNumsCount();
-    /**
-     * <code>repeated int32 blockNums = 1;</code>
-     */
-    int getBlockNums(int index);
+    int getBlockNum();
   }
   /**
    * Protobuf type {@code BlockLocationRequest}
@@ -4644,24 +4640,8 @@ public final class Hdfs {
               break;
             }
             case 8: {
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                blockNums_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              blockNums_.add(input.readInt32());
-              break;
-            }
-            case 10: {
-              int length = input.readRawVarint32();
-              int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
-                blockNums_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              while (input.getBytesUntilLimit() > 0) {
-                blockNums_.add(input.readInt32());
-              }
-              input.popLimit(limit);
+              bitField0_ |= 0x00000001;
+              blockNum_ = input.readInt32();
               break;
             }
           }
@@ -4672,9 +4652,6 @@ public final class Hdfs {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          blockNums_ = java.util.Collections.unmodifiableList(blockNums_);
-        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -4706,31 +4683,25 @@ public final class Hdfs {
       return PARSER;
     }
 
-    // repeated int32 blockNums = 1;
-    public static final int BLOCKNUMS_FIELD_NUMBER = 1;
-    private java.util.List<java.lang.Integer> blockNums_;
+    private int bitField0_;
+    // optional int32 blockNum = 1;
+    public static final int BLOCKNUM_FIELD_NUMBER = 1;
+    private int blockNum_;
     /**
-     * <code>repeated int32 blockNums = 1;</code>
+     * <code>optional int32 blockNum = 1;</code>
      */
-    public java.util.List<java.lang.Integer>
-        getBlockNumsList() {
-      return blockNums_;
+    public boolean hasBlockNum() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>repeated int32 blockNums = 1;</code>
+     * <code>optional int32 blockNum = 1;</code>
      */
-    public int getBlockNumsCount() {
-      return blockNums_.size();
-    }
-    /**
-     * <code>repeated int32 blockNums = 1;</code>
-     */
-    public int getBlockNums(int index) {
-      return blockNums_.get(index);
+    public int getBlockNum() {
+      return blockNum_;
     }
 
     private void initFields() {
-      blockNums_ = java.util.Collections.emptyList();
+      blockNum_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -4744,8 +4715,8 @@ public final class Hdfs {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      for (int i = 0; i < blockNums_.size(); i++) {
-        output.writeInt32(1, blockNums_.get(i));
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, blockNum_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -4756,14 +4727,9 @@ public final class Hdfs {
       if (size != -1) return size;
 
       size = 0;
-      {
-        int dataSize = 0;
-        for (int i = 0; i < blockNums_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(blockNums_.get(i));
-        }
-        size += dataSize;
-        size += 1 * getBlockNumsList().size();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, blockNum_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -4881,7 +4847,7 @@ public final class Hdfs {
 
       public Builder clear() {
         super.clear();
-        blockNums_ = java.util.Collections.emptyList();
+        blockNum_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -4910,11 +4876,12 @@ public final class Hdfs {
       public Hdfs.BlockLocationRequest buildPartial() {
         Hdfs.BlockLocationRequest result = new Hdfs.BlockLocationRequest(this);
         int from_bitField0_ = bitField0_;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          blockNums_ = java.util.Collections.unmodifiableList(blockNums_);
-          bitField0_ = (bitField0_ & ~0x00000001);
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
         }
-        result.blockNums_ = blockNums_;
+        result.blockNum_ = blockNum_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -4930,15 +4897,8 @@ public final class Hdfs {
 
       public Builder mergeFrom(Hdfs.BlockLocationRequest other) {
         if (other == Hdfs.BlockLocationRequest.getDefaultInstance()) return this;
-        if (!other.blockNums_.isEmpty()) {
-          if (blockNums_.isEmpty()) {
-            blockNums_ = other.blockNums_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureBlockNumsIsMutable();
-            blockNums_.addAll(other.blockNums_);
-          }
-          onChanged();
+        if (other.hasBlockNum()) {
+          setBlockNum(other.getBlockNum());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -4967,68 +4927,35 @@ public final class Hdfs {
       }
       private int bitField0_;
 
-      // repeated int32 blockNums = 1;
-      private java.util.List<java.lang.Integer> blockNums_ = java.util.Collections.emptyList();
-      private void ensureBlockNumsIsMutable() {
-        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          blockNums_ = new java.util.ArrayList<java.lang.Integer>(blockNums_);
-          bitField0_ |= 0x00000001;
-         }
+      // optional int32 blockNum = 1;
+      private int blockNum_ ;
+      /**
+       * <code>optional int32 blockNum = 1;</code>
+       */
+      public boolean hasBlockNum() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>repeated int32 blockNums = 1;</code>
+       * <code>optional int32 blockNum = 1;</code>
        */
-      public java.util.List<java.lang.Integer>
-          getBlockNumsList() {
-        return java.util.Collections.unmodifiableList(blockNums_);
+      public int getBlockNum() {
+        return blockNum_;
       }
       /**
-       * <code>repeated int32 blockNums = 1;</code>
+       * <code>optional int32 blockNum = 1;</code>
        */
-      public int getBlockNumsCount() {
-        return blockNums_.size();
-      }
-      /**
-       * <code>repeated int32 blockNums = 1;</code>
-       */
-      public int getBlockNums(int index) {
-        return blockNums_.get(index);
-      }
-      /**
-       * <code>repeated int32 blockNums = 1;</code>
-       */
-      public Builder setBlockNums(
-          int index, int value) {
-        ensureBlockNumsIsMutable();
-        blockNums_.set(index, value);
+      public Builder setBlockNum(int value) {
+        bitField0_ |= 0x00000001;
+        blockNum_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 blockNums = 1;</code>
+       * <code>optional int32 blockNum = 1;</code>
        */
-      public Builder addBlockNums(int value) {
-        ensureBlockNumsIsMutable();
-        blockNums_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated int32 blockNums = 1;</code>
-       */
-      public Builder addAllBlockNums(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
-        ensureBlockNumsIsMutable();
-        super.addAll(values, blockNums_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated int32 blockNums = 1;</code>
-       */
-      public Builder clearBlockNums() {
-        blockNums_ = java.util.Collections.emptyList();
+      public Builder clearBlockNum() {
         bitField0_ = (bitField0_ & ~0x00000001);
+        blockNum_ = 0;
         onChanged();
         return this;
       }
@@ -5057,30 +4984,19 @@ public final class Hdfs {
      */
     int getStatus();
 
-    // repeated .BlockLocations blockLocations = 2;
+    // optional .BlockLocations blockLocations = 2;
     /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
+     * <code>optional .BlockLocations blockLocations = 2;</code>
      */
-    java.util.List<Hdfs.BlockLocations> 
-        getBlockLocationsList();
+    boolean hasBlockLocations();
     /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
+     * <code>optional .BlockLocations blockLocations = 2;</code>
      */
-    Hdfs.BlockLocations getBlockLocations(int index);
+    Hdfs.BlockLocations getBlockLocations();
     /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
+     * <code>optional .BlockLocations blockLocations = 2;</code>
      */
-    int getBlockLocationsCount();
-    /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
-     */
-    java.util.List<? extends Hdfs.BlockLocationsOrBuilder> 
-        getBlockLocationsOrBuilderList();
-    /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
-     */
-    Hdfs.BlockLocationsOrBuilder getBlockLocationsOrBuilder(
-        int index);
+    Hdfs.BlockLocationsOrBuilder getBlockLocationsOrBuilder();
   }
   /**
    * Protobuf type {@code BlockLocationResponse}
@@ -5139,11 +5055,16 @@ public final class Hdfs {
               break;
             }
             case 18: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                blockLocations_ = new java.util.ArrayList<Hdfs.BlockLocations>();
-                mutable_bitField0_ |= 0x00000002;
+              Hdfs.BlockLocations.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = blockLocations_.toBuilder();
               }
-              blockLocations_.add(input.readMessage(Hdfs.BlockLocations.PARSER, extensionRegistry));
+              blockLocations_ = input.readMessage(Hdfs.BlockLocations.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(blockLocations_);
+                blockLocations_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
               break;
             }
           }
@@ -5154,9 +5075,6 @@ public final class Hdfs {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          blockLocations_ = java.util.Collections.unmodifiableList(blockLocations_);
-        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -5205,45 +5123,31 @@ public final class Hdfs {
       return status_;
     }
 
-    // repeated .BlockLocations blockLocations = 2;
+    // optional .BlockLocations blockLocations = 2;
     public static final int BLOCKLOCATIONS_FIELD_NUMBER = 2;
-    private java.util.List<Hdfs.BlockLocations> blockLocations_;
+    private Hdfs.BlockLocations blockLocations_;
     /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
+     * <code>optional .BlockLocations blockLocations = 2;</code>
      */
-    public java.util.List<Hdfs.BlockLocations> getBlockLocationsList() {
+    public boolean hasBlockLocations() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .BlockLocations blockLocations = 2;</code>
+     */
+    public Hdfs.BlockLocations getBlockLocations() {
       return blockLocations_;
     }
     /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
+     * <code>optional .BlockLocations blockLocations = 2;</code>
      */
-    public java.util.List<? extends Hdfs.BlockLocationsOrBuilder> 
-        getBlockLocationsOrBuilderList() {
+    public Hdfs.BlockLocationsOrBuilder getBlockLocationsOrBuilder() {
       return blockLocations_;
-    }
-    /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
-     */
-    public int getBlockLocationsCount() {
-      return blockLocations_.size();
-    }
-    /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
-     */
-    public Hdfs.BlockLocations getBlockLocations(int index) {
-      return blockLocations_.get(index);
-    }
-    /**
-     * <code>repeated .BlockLocations blockLocations = 2;</code>
-     */
-    public Hdfs.BlockLocationsOrBuilder getBlockLocationsOrBuilder(
-        int index) {
-      return blockLocations_.get(index);
     }
 
     private void initFields() {
       status_ = 0;
-      blockLocations_ = java.util.Collections.emptyList();
+      blockLocations_ = Hdfs.BlockLocations.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5260,8 +5164,8 @@ public final class Hdfs {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(1, status_);
       }
-      for (int i = 0; i < blockLocations_.size(); i++) {
-        output.writeMessage(2, blockLocations_.get(i));
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, blockLocations_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -5276,9 +5180,9 @@ public final class Hdfs {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, status_);
       }
-      for (int i = 0; i < blockLocations_.size(); i++) {
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, blockLocations_.get(i));
+          .computeMessageSize(2, blockLocations_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -5400,11 +5304,11 @@ public final class Hdfs {
         status_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         if (blockLocationsBuilder_ == null) {
-          blockLocations_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          blockLocations_ = Hdfs.BlockLocations.getDefaultInstance();
         } else {
           blockLocationsBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -5437,11 +5341,10 @@ public final class Hdfs {
           to_bitField0_ |= 0x00000001;
         }
         result.status_ = status_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
         if (blockLocationsBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) == 0x00000002)) {
-            blockLocations_ = java.util.Collections.unmodifiableList(blockLocations_);
-            bitField0_ = (bitField0_ & ~0x00000002);
-          }
           result.blockLocations_ = blockLocations_;
         } else {
           result.blockLocations_ = blockLocationsBuilder_.build();
@@ -5465,31 +5368,8 @@ public final class Hdfs {
         if (other.hasStatus()) {
           setStatus(other.getStatus());
         }
-        if (blockLocationsBuilder_ == null) {
-          if (!other.blockLocations_.isEmpty()) {
-            if (blockLocations_.isEmpty()) {
-              blockLocations_ = other.blockLocations_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-            } else {
-              ensureBlockLocationsIsMutable();
-              blockLocations_.addAll(other.blockLocations_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.blockLocations_.isEmpty()) {
-            if (blockLocationsBuilder_.isEmpty()) {
-              blockLocationsBuilder_.dispose();
-              blockLocationsBuilder_ = null;
-              blockLocations_ = other.blockLocations_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-              blockLocationsBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getBlockLocationsFieldBuilder() : null;
-            } else {
-              blockLocationsBuilder_.addAllMessages(other.blockLocations_);
-            }
-          }
+        if (other.hasBlockLocations()) {
+          mergeBlockLocations(other.getBlockLocations());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -5551,239 +5431,116 @@ public final class Hdfs {
         return this;
       }
 
-      // repeated .BlockLocations blockLocations = 2;
-      private java.util.List<Hdfs.BlockLocations> blockLocations_ =
-        java.util.Collections.emptyList();
-      private void ensureBlockLocationsIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          blockLocations_ = new java.util.ArrayList<Hdfs.BlockLocations>(blockLocations_);
-          bitField0_ |= 0x00000002;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
+      // optional .BlockLocations blockLocations = 2;
+      private Hdfs.BlockLocations blockLocations_ = Hdfs.BlockLocations.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
           Hdfs.BlockLocations, Hdfs.BlockLocations.Builder, Hdfs.BlockLocationsOrBuilder> blockLocationsBuilder_;
-
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
-      public java.util.List<Hdfs.BlockLocations> getBlockLocationsList() {
+      public boolean hasBlockLocations() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional .BlockLocations blockLocations = 2;</code>
+       */
+      public Hdfs.BlockLocations getBlockLocations() {
         if (blockLocationsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(blockLocations_);
+          return blockLocations_;
         } else {
-          return blockLocationsBuilder_.getMessageList();
+          return blockLocationsBuilder_.getMessage();
         }
       }
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
-      public int getBlockLocationsCount() {
+      public Builder setBlockLocations(Hdfs.BlockLocations value) {
         if (blockLocationsBuilder_ == null) {
-          return blockLocations_.size();
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          blockLocations_ = value;
+          onChanged();
         } else {
-          return blockLocationsBuilder_.getCount();
+          blockLocationsBuilder_.setMessage(value);
         }
+        bitField0_ |= 0x00000002;
+        return this;
       }
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Hdfs.BlockLocations getBlockLocations(int index) {
-        if (blockLocationsBuilder_ == null) {
-          return blockLocations_.get(index);
-        } else {
-          return blockLocationsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
       public Builder setBlockLocations(
-          int index, Hdfs.BlockLocations value) {
-        if (blockLocationsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureBlockLocationsIsMutable();
-          blockLocations_.set(index, value);
-          onChanged();
-        } else {
-          blockLocationsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Builder setBlockLocations(
-          int index, Hdfs.BlockLocations.Builder builderForValue) {
-        if (blockLocationsBuilder_ == null) {
-          ensureBlockLocationsIsMutable();
-          blockLocations_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          blockLocationsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Builder addBlockLocations(Hdfs.BlockLocations value) {
-        if (blockLocationsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureBlockLocationsIsMutable();
-          blockLocations_.add(value);
-          onChanged();
-        } else {
-          blockLocationsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Builder addBlockLocations(
-          int index, Hdfs.BlockLocations value) {
-        if (blockLocationsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureBlockLocationsIsMutable();
-          blockLocations_.add(index, value);
-          onChanged();
-        } else {
-          blockLocationsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Builder addBlockLocations(
           Hdfs.BlockLocations.Builder builderForValue) {
         if (blockLocationsBuilder_ == null) {
-          ensureBlockLocationsIsMutable();
-          blockLocations_.add(builderForValue.build());
+          blockLocations_ = builderForValue.build();
           onChanged();
         } else {
-          blockLocationsBuilder_.addMessage(builderForValue.build());
+          blockLocationsBuilder_.setMessage(builderForValue.build());
         }
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
-      public Builder addBlockLocations(
-          int index, Hdfs.BlockLocations.Builder builderForValue) {
+      public Builder mergeBlockLocations(Hdfs.BlockLocations value) {
         if (blockLocationsBuilder_ == null) {
-          ensureBlockLocationsIsMutable();
-          blockLocations_.add(index, builderForValue.build());
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              blockLocations_ != Hdfs.BlockLocations.getDefaultInstance()) {
+            blockLocations_ =
+              Hdfs.BlockLocations.newBuilder(blockLocations_).mergeFrom(value).buildPartial();
+          } else {
+            blockLocations_ = value;
+          }
           onChanged();
         } else {
-          blockLocationsBuilder_.addMessage(index, builderForValue.build());
+          blockLocationsBuilder_.mergeFrom(value);
         }
+        bitField0_ |= 0x00000002;
         return this;
       }
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Builder addAllBlockLocations(
-          java.lang.Iterable<? extends Hdfs.BlockLocations> values) {
-        if (blockLocationsBuilder_ == null) {
-          ensureBlockLocationsIsMutable();
-          super.addAll(values, blockLocations_);
-          onChanged();
-        } else {
-          blockLocationsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
       public Builder clearBlockLocations() {
         if (blockLocationsBuilder_ == null) {
-          blockLocations_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          blockLocations_ = Hdfs.BlockLocations.getDefaultInstance();
           onChanged();
         } else {
           blockLocationsBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
-      public Builder removeBlockLocations(int index) {
-        if (blockLocationsBuilder_ == null) {
-          ensureBlockLocationsIsMutable();
-          blockLocations_.remove(index);
-          onChanged();
-        } else {
-          blockLocationsBuilder_.remove(index);
-        }
-        return this;
+      public Hdfs.BlockLocations.Builder getBlockLocationsBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getBlockLocationsFieldBuilder().getBuilder();
       }
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
-      public Hdfs.BlockLocations.Builder getBlockLocationsBuilder(
-          int index) {
-        return getBlockLocationsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Hdfs.BlockLocationsOrBuilder getBlockLocationsOrBuilder(
-          int index) {
-        if (blockLocationsBuilder_ == null) {
-          return blockLocations_.get(index);  } else {
-          return blockLocationsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public java.util.List<? extends Hdfs.BlockLocationsOrBuilder> 
-           getBlockLocationsOrBuilderList() {
+      public Hdfs.BlockLocationsOrBuilder getBlockLocationsOrBuilder() {
         if (blockLocationsBuilder_ != null) {
-          return blockLocationsBuilder_.getMessageOrBuilderList();
+          return blockLocationsBuilder_.getMessageOrBuilder();
         } else {
-          return java.util.Collections.unmodifiableList(blockLocations_);
+          return blockLocations_;
         }
       }
       /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
+       * <code>optional .BlockLocations blockLocations = 2;</code>
        */
-      public Hdfs.BlockLocations.Builder addBlockLocationsBuilder() {
-        return getBlockLocationsFieldBuilder().addBuilder(
-            Hdfs.BlockLocations.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public Hdfs.BlockLocations.Builder addBlockLocationsBuilder(
-          int index) {
-        return getBlockLocationsFieldBuilder().addBuilder(
-            index, Hdfs.BlockLocations.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .BlockLocations blockLocations = 2;</code>
-       */
-      public java.util.List<Hdfs.BlockLocations.Builder> 
-           getBlockLocationsBuilderList() {
-        return getBlockLocationsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilder<
           Hdfs.BlockLocations, Hdfs.BlockLocations.Builder, Hdfs.BlockLocationsOrBuilder> 
           getBlockLocationsFieldBuilder() {
         if (blockLocationsBuilder_ == null) {
-          blockLocationsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          blockLocationsBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               Hdfs.BlockLocations, Hdfs.BlockLocations.Builder, Hdfs.BlockLocationsOrBuilder>(
                   blockLocations_,
-                  ((bitField0_ & 0x00000002) == 0x00000002),
                   getParentForChildren(),
                   isClean());
           blockLocations_ = null;
@@ -11018,22 +10775,22 @@ public final class Hdfs {
       ",\n\020DataNodeLocation\022\n\n\002ip\030\001 \001(\t\022\014\n\004port\030" +
       "\002 \001(\005\"K\n\016BlockLocations\022\023\n\013blockNumber\030\001",
       " \001(\005\022$\n\tlocations\030\002 \003(\0132\021.DataNodeLocati" +
-      "on\")\n\024BlockLocationRequest\022\021\n\tblockNums\030" +
-      "\001 \003(\005\"P\n\025BlockLocationResponse\022\016\n\006status" +
-      "\030\001 \001(\005\022\'\n\016blockLocations\030\002 \003(\0132\017.BlockLo" +
-      "cations\"$\n\022AssignBlockRequest\022\016\n\006handle\030" +
-      "\001 \001(\005\"H\n\023AssignBlockResponse\022\016\n\006status\030\001" +
-      " \001(\005\022!\n\010newBlock\030\002 \001(\0132\017.BlockLocations\"" +
-      "#\n\020ListFilesRequest\022\017\n\007dirName\030\001 \001(\t\"6\n\021" +
-      "ListFilesResponse\022\016\n\006status\030\001 \001(\005\022\021\n\tfil" +
-      "eNames\030\002 \003(\t\"\'\n\020ReadBlockRequest\022\023\n\013bloc",
-      "kNumber\030\001 \001(\005\"1\n\021ReadBlockResponse\022\016\n\006st" +
-      "atus\030\001 \001(\005\022\014\n\004data\030\002 \003(\014\"[\n\022BlockReportR" +
-      "equest\022\n\n\002id\030\001 \001(\005\022#\n\010location\030\002 \001(\0132\021.D" +
-      "ataNodeLocation\022\024\n\014blockNumbers\030\003 \003(\005\"%\n" +
-      "\023BlockReportResponse\022\016\n\006status\030\001 \003(\005\"\036\n\020" +
-      "HeartBeatRequest\022\n\n\002id\030\001 \001(\005\"#\n\021HeartBea" +
-      "tResponse\022\016\n\006status\030\001 \001(\005"
+      "on\"(\n\024BlockLocationRequest\022\020\n\010blockNum\030\001" +
+      " \001(\005\"P\n\025BlockLocationResponse\022\016\n\006status\030" +
+      "\001 \001(\005\022\'\n\016blockLocations\030\002 \001(\0132\017.BlockLoc" +
+      "ations\"$\n\022AssignBlockRequest\022\016\n\006handle\030\001" +
+      " \001(\005\"H\n\023AssignBlockResponse\022\016\n\006status\030\001 " +
+      "\001(\005\022!\n\010newBlock\030\002 \001(\0132\017.BlockLocations\"#" +
+      "\n\020ListFilesRequest\022\017\n\007dirName\030\001 \001(\t\"6\n\021L" +
+      "istFilesResponse\022\016\n\006status\030\001 \001(\005\022\021\n\tfile" +
+      "Names\030\002 \003(\t\"\'\n\020ReadBlockRequest\022\023\n\013block",
+      "Number\030\001 \001(\005\"1\n\021ReadBlockResponse\022\016\n\006sta" +
+      "tus\030\001 \001(\005\022\014\n\004data\030\002 \003(\014\"[\n\022BlockReportRe" +
+      "quest\022\n\n\002id\030\001 \001(\005\022#\n\010location\030\002 \001(\0132\021.Da" +
+      "taNodeLocation\022\024\n\014blockNumbers\030\003 \003(\005\"%\n\023" +
+      "BlockReportResponse\022\016\n\006status\030\001 \003(\005\"\036\n\020H" +
+      "eartBeatRequest\022\n\n\002id\030\001 \001(\005\"#\n\021HeartBeat" +
+      "Response\022\016\n\006status\030\001 \001(\005"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -11093,7 +10850,7 @@ public final class Hdfs {
           internal_static_BlockLocationRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_BlockLocationRequest_descriptor,
-              new java.lang.String[] { "BlockNums", });
+              new java.lang.String[] { "BlockNum", });
           internal_static_BlockLocationResponse_descriptor =
             getDescriptor().getMessageTypes().get(9);
           internal_static_BlockLocationResponse_fieldAccessorTable = new

@@ -56,6 +56,7 @@ public class DataNode implements IDataNode {
 	    }
       }
    }
+}
 
    class HeartBeatThread extends Thread{
 

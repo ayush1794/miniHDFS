@@ -85,18 +85,20 @@ public class Client {
 		  int numBytes;
 
 		  FileInputStream input = new FileInputStream(new File(fileName));
+		  IDataNode dnStub = (IDataNode) NN_Registry.lookup("DN");
 		  while ((numBytes = input.read(readBytes)) != -1) {
-		     Hdfs.AssignBlockRequest.Builder assignBlockRequestBuilder = Hdfs.AssignBlockRequest.newBuilder();
-		     assignBlockRequestBuilder.setHandle(openFileResponse.getHandle());
-		     byte[] assignBlockRequestBytes = assignBlockRequestBuilder.build().toByteArray();
-		     byte[] assignBlockResponseBytes = stub.assignBlock(assignBlockRequestBytes);
-		     Hdfs.AssignBlockResponse assignBlockResponse = Hdfs.AssignBlockResponse.parseFrom(assignBlockResponseBytes);
-		     //Hdfs.BlockLocations blockLocations = assignBlockResponse.getNewBlock();
+		    Hdfs.AssignBlockRequest.Builder assignBlockRequestBuilder = Hdfs.AssignBlockRequest.newBuilder();
+		    assignBlockRequestBuilder.setHandle(openFileResponse.getHandle());
+		    byte[] assignBlockRequestBytes = assignBlockRequestBuilder.build().toByteArray();
+		    byte[] assignBlockResponseBytes = stub.assignBlock(assignBlockRequestBytes);
+		    Hdfs.AssignBlockResponse assignBlockResponse = Hdfs.AssignBlockResponse.parseFrom(assignBlockResponseBytes);
+		    //Hdfs.BlockLocations blockLocations = assignBlockResponse.getNewBlock();
 
-		     System.out.println("Size: " + assignBlockResponse.getNewBlock().getLocationsList().size());
-
-		     for(Hdfs.DataNodeLocation location : assignBlockResponse.getNewBlock().getLocationsList())
-			System.out.println(location.getIp() + ":" + location.getPort());
+		    Hdfs.WriteBlockRequest.Builder writeBlockRequestBuilder = Hdfs.WriteBlockRequest.newBuilder();
+		    writeBlockRequestBuilder.addData(ByteString.copyFrom(readBytes));
+		    writeBlockRequestBuilder.setBlockInfo(assignBlockResponse.getNewBlock());
+		    byte[] writeBlockResponseBytes = dnStub.writeBlock(writeBlockRequestBuilder.build().toByteArray());
+			Hdfs.WriteBlockResponse writeBlockResponse = Hdfs.WriteBlockResponse.parseFrom(writeBlockResponseBytes);
 		  }
 
 	       }

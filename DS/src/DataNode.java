@@ -4,6 +4,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.io.*;
+import com.google.protobuf.ByteString;
 
 public class DataNode implements IDataNode {
 
@@ -14,6 +15,7 @@ public class DataNode implements IDataNode {
    private static final int heartBeatReturnCode = 1;
    private static final String BLOCK_REPORT = "block_report.txt";
    private static int ID;
+   private static final int block_size = 32*1024*1024;
 
    static class BlockReportThread extends Thread{
 
@@ -84,15 +86,24 @@ public class DataNode implements IDataNode {
 
    public synchronized byte[] readBlock(byte[] inp) throws RemoteException{
       File dir = new File("Blocks");
-      byte[] data = null;
+      Hdfs.ReadBlockResponse.Builder rbr_builder = Hdfs.ReadBlockResponse.newBuilder().setStatus(1);
       try{
 	 int blk_num = Hdfs.ReadBlockRequest.parseFrom(inp).getBlockNumber();
 	 File block = new File(dir, String.valueOf(blk_num));
 	 FileInputStream fis = new FileInputStream(block);
+	 byte[] blk = new byte[block_size];
+	 int bytes;
+
+	 while((bytes = fis.read(blk)) != -1){
+	    ByteString data = ByteString.copyFrom(blk);
+	    rbr_builder.addData(data);
+	 }
+
       } catch( Exception e) {
 	 e.printStackTrace();
       }
-      return null;
+
+      return rbr_builder.build().toByteArray();
    }
 
    public synchronized byte[] writeBlock(byte[] inp) throws RemoteException{

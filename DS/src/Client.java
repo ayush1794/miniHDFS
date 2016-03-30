@@ -1,9 +1,10 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
+import java.rmi.RemoteException;
+
+import java.util.*;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,8 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.rmi.RemoteException;
-
 
 public class Client {
 
@@ -24,7 +23,7 @@ public class Client {
    private static String GET = "get";
    private static String PUT = "put";
    private static String LIST = "list";
-   private int blockSize = 33554432; // 32 Mb
+   private static int blockSize = 33554432; // 32 Mb
 
       public static void main(String[] args){
 
@@ -32,7 +31,8 @@ public class Client {
 	 Hdfs.OpenFileRequest.Builder ofr;
 	 // String host = (args.length < 1) ? null : args[0];
 	 try {
-	    NN_Registry = LocateRegistry.getRegistry(NN_IP, NN_PORT);
+	    //NN_Registry = LocateRegistry.getRegistry(NN_IP, NN_PORT);
+	    NN_Registry = LocateRegistry.getRegistry();
 	    INameNode stub = (INameNode) NN_Registry.lookup("NN");
 	    while (true) {
 	       String command = scanner.next();
@@ -46,19 +46,30 @@ public class Client {
 		  System.err.println(fileName);
 
 		  //openfile
-		  byte[] openFileRequestBytes = Hdfs.OpenFileRequest.newBuilder().setFileName(fileName).setForRead(false).build().toByteArray();
+		  Hdfs.OpenFileRequest.Builder openFileRequestBuilder = Hdfs.OpenFileRequest.newBuilder();
+		  openFileRequestBuilder.setFileName(fileName);
+		  openFileRequestBuilder.setForRead(false);
+		  byte[] openFileRequestBytes = openFileRequestBuilder.build().toByteArray();
 		  byte[] openFileResponseBytes = stub.openFile(openFileRequestBytes);
-		  Hdfs.OpenFileResponse openFileResponse = Hdfs.OpenFileResponse.parseFrom(openFileResponseBytes);
+		  if(openFileResponseBytes!=null) {
+		  	Hdfs.OpenFileResponse openFileResponse = Hdfs.OpenFileResponse.parseFrom(openFileResponseBytes);
 
-		  if(openFileResponse.getStatus()) {
 		  	byte[] readBytes = new byte[blockSize];
 		  	int numBytes;
 
-            FileInputStream input = new FileInputStream(new File(filename));
-            while ((read_bytes = fis.read(w)) != -1) {
-				byte[] assignBlockRequestBytes = Hdfs.AssignBlockRequest.newBuilder().setHandle(openFileResponse.getHandle()).build().toByteArray();
-				byte[] assignBlockResponseBytes = tempStub.assignBlock(assignBlockRequestBytes);
+            FileInputStream input = new FileInputStream(new File(fileName));
+            while ((numBytes = input.read(readBytes)) != -1) {
+				Hdfs.AssignBlockRequest.Builder assignBlockRequestBuilder = Hdfs.AssignBlockRequest.newBuilder(); 
+				assignBlockRequestBuilder.setHandle(openFileResponse.getHandle());
+				byte[] assignBlockRequestBytes = assignBlockRequestBuilder.build().toByteArray();
+				byte[] assignBlockResponseBytes = stub.assignBlock(assignBlockRequestBytes);
 				Hdfs.AssignBlockResponse assignBlockResponse = Hdfs.AssignBlockResponse.parseFrom(assignBlockResponseBytes);
+				//Hdfs.BlockLocations blockLocations = assignBlockResponse.getNewBlock();
+
+				System.out.println("Size: " + assignBlockResponse.getNewBlock().getLocationsList().size());
+
+				for(Hdfs.DataNodeLocation location : assignBlockResponse.getNewBlock().getLocationsList())
+					System.out.println(location.getIp() + ":" + location.getPort());
             }
 
 		  }

@@ -1,22 +1,10 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
 public class NameNode implements INameNode {
 
    private static String TAG = "NN";
@@ -41,10 +29,10 @@ public class NameNode implements INameNode {
          Hdfs.OpenFileRequest openFileRequest =Hdfs.OpenFileRequest.parseFrom(inp);
          String filename = openFileRequest.getFileName();
          boolean forRead = openFileRequest.getForRead();
-         
+
          byte[] openFileResponseBytes;
          handle_filename_map.put(fileNum, filename);
-                
+
          Hdfs.OpenFileResponse.Builder openFileResponseBuilder = Hdfs.OpenFileResponse.newBuilder();
          openFileResponseBuilder.setStatus(1);
          openFileResponseBuilder.setHandle(fileNum);
@@ -79,7 +67,7 @@ public class NameNode implements INameNode {
             filename_block_map.put(filename, new ArrayList<Integer>(Arrays.asList(blockNum)));
 
          Hdfs.BlockLocations.Builder blockLocationsBuilder = Hdfs.BlockLocations.newBuilder();
-         
+
          Hdfs.DataNodeLocation.Builder dataNodeLocationBuilder = Hdfs.DataNodeLocation.newBuilder();
 
          int datanode1, datanode2;
@@ -87,7 +75,7 @@ public class NameNode implements INameNode {
          do {
             datanode2 = new Random().nextInt(dataNodeNum);
          } while(datanode2==datanode1);
-         
+
          System.out.println(datanode1 + " " + datanode2);
          blockLocationsBuilder.setBlockNumber(blockNum);
 
@@ -101,33 +89,71 @@ public class NameNode implements INameNode {
 
          block_datanode_map.put(blockNum, new ArrayList<Integer>(Arrays.asList(datanode1, datanode2)));
          blockNum++;
-         
+
          Hdfs.AssignBlockResponse.Builder assignBlockResponseBuilder = Hdfs.AssignBlockResponse.newBuilder();
          assignBlockResponseBuilder.setStatus(1);
          assignBlockResponseBuilder.setNewBlock(blockLocationsBuilder.build());
-         assignBlockResponseBytes = assignBlockResponseBuilder.build().toByteArray(); 
+         assignBlockResponseBytes = assignBlockResponseBuilder.build().toByteArray();
       } catch(Exception e){
-         System.out.println("Exception while assigning block at name server");
          e.printStackTrace();
       }
       return assignBlockResponseBytes;
    }
 
    public byte[] list(byte[] inp ) throws RemoteException{
+      try{
+	 Hdfs.ListFilesResponse.Builder lfr_builder = Hdfs.ListFilesResponse.newBuilder().setStatus(1);
+	 for(String fileName : filename_block_map.keySet()){
+	    lfr_builder.addFileNames(fileName);
+	 }
+	 return lfr_builder.build().toByteArray();
+      } catch (Exception e) {
+	 e.printStackTrace();
+      }
       return null;
    }
 
    public byte[] blockReport(byte[] inp ) throws RemoteException{
+      try{
+	 Hdfs.BlockReportRequest req = Hdfs.BlockReportRequest.parseFrom(inp);
+	 int datanode_id = req.getId();
+	 int num_blks = req.getBlockNumbersCount();
+
+	 for(int i=0;i<num_blks;i++){
+	    if(block_datanode_map.get(req.getBlockNumbers(i)) == null){
+	       block_datanode_map.put(req.getBlockNumbers(i), new ArrayList<Integer>(Arrays.asList(datanode_id)));
+	    }
+	    else{
+	       if (!block_datanode_map.get(req.getBlockNumbers(i)).contains(datanode_id))
+		  block_datanode_map.get(req.getBlockNumbers(i)).add(datanode_id);
+	    }
+	 }
+
+	 Hdfs.BlockReportResponse.Builder brr_builder = Hdfs.BlockReportResponse.newBuilder().setStatus(0,1);
+	 return brr_builder.build().toByteArray();
+      } catch (Exception e) {
+	 e.printStackTrace();
+      }
       return null;
    }
 
    public byte[] heartBeat(byte[] inp ) throws RemoteException{
+      try{
+	 Hdfs.HeartBeatRequest req = Hdfs.HeartBeatRequest.parseFrom(inp);
+	 int id = req.getId();
+	 System.err.println("HeartBeat received from DN : " + String.valueOf(id));
+
+	 Hdfs.HeartBeatResponse.Builder hbr_builder = Hdfs.HeartBeatResponse.newBuilder().setStatus(1);
+	 return hbr_builder.build().toByteArray();
+      } catch (Exception e) {
+	 e.printStackTrace();
+      }
       return null;
    }
 
    public static void main(String args[]) {
       //TODO : set hostname property
-   
+
       try {
 	 NameNode obj = new NameNode();
 	 INameNode stub = (INameNode) UnicastRemoteObject.exportObject(obj, 0);

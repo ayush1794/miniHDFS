@@ -7,10 +7,10 @@ import java.rmi.RemoteException;
 
 public class NameNode implements INameNode {
 
-   private static String TAG = "NN";
+   private static String TAG = "NN", FILE_LIST = "file_list.txt";
    private HashMap<Integer, String> handle_filename_map;
-   private HashMap<String, ArrayList<Integer>> filename_block_map;
-   private HashMap<Integer, ArrayList<Integer>> block_datanode_map;
+   private static HashMap<String, ArrayList<Integer>> filename_block_map;
+   private static HashMap<Integer, ArrayList<Integer>> block_datanode_map;
    public int blockNum, fileNum;
    private static int dataNodeNum = 4;
    private static String[] dataNodeIPs = {"127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1"};
@@ -26,21 +26,21 @@ public class NameNode implements INameNode {
 
    public byte[] openFile(byte[] inp) throws RemoteException{
       try {
-         Hdfs.OpenFileRequest openFileRequest =Hdfs.OpenFileRequest.parseFrom(inp);
-         String filename = openFileRequest.getFileName();
-         boolean forRead = openFileRequest.getForRead();
+	 Hdfs.OpenFileRequest openFileRequest =Hdfs.OpenFileRequest.parseFrom(inp);
+	 String filename = openFileRequest.getFileName();
+	 boolean forRead = openFileRequest.getForRead();
 
-         byte[] openFileResponseBytes;
-         handle_filename_map.put(fileNum, filename);
+	 byte[] openFileResponseBytes;
+	 handle_filename_map.put(fileNum, filename);
 
-         Hdfs.OpenFileResponse.Builder openFileResponseBuilder = Hdfs.OpenFileResponse.newBuilder();
-         openFileResponseBuilder.setStatus(1);
-         openFileResponseBuilder.setHandle(fileNum);
-         if(filename_block_map.get(filename)!=null)
-            for(int i : filename_block_map.get(filename))
-               openFileResponseBuilder.addBlockNums(i);
-          fileNum++;
-         return openFileResponseBuilder.build().toByteArray();
+	 Hdfs.OpenFileResponse.Builder openFileResponseBuilder = Hdfs.OpenFileResponse.newBuilder();
+	 openFileResponseBuilder.setStatus(1);
+	 openFileResponseBuilder.setHandle(fileNum);
+	 if(filename_block_map.get(filename)!=null)
+	    for(int i : filename_block_map.get(filename))
+	       openFileResponseBuilder.addBlockNums(i);
+	 fileNum++;
+	 return openFileResponseBuilder.build().toByteArray();
       }
       catch(Exception e){System.out.println("Unable to open file at name node\n");}
 
@@ -48,7 +48,33 @@ public class NameNode implements INameNode {
    }
 
    public byte[] closeFile(byte[] inp ) throws RemoteException{
+      try{
+	 Hdfs.CloseFileRequest closeFileRequest = Hdfs.CloseFileRequest.parseFrom(inp);
+	 int handle = closeFileRequest.getHandle();
+
+
+	 File report = new File(FILE_LIST);
+
+	 FileWriter fw = new FileWriter(report.getName(), true);
+
+	 BufferedWriter bw = new BufferedWriter(fw);
+
+	 String filename = (String) handle_filename_map.get(handle);
+	 ArrayList<Integer> blockList = filename_block_map.get(filename);
+
+	 bw.write(filename+" ");
+	 for(int i : blockList) {
+	    bw.write(Integer.toString(i)+" ");
+	 }
+	 bw.newLine();
+
+	 bw.close();
+      } catch( Exception e )
+      {
+	 e.printStackTrace();
+      }
       return null;
+
    }
 
    public byte[] getBlockLocations(byte[] inp ) throws RemoteException{
@@ -73,44 +99,45 @@ public class NameNode implements INameNode {
    public byte[] assignBlock(byte[] inp ) throws RemoteException{
       byte[] assignBlockResponseBytes = null;
       try {
-         Hdfs.AssignBlockRequest assignBlockRequest = Hdfs.AssignBlockRequest.parseFrom(inp);
-         int handle=assignBlockRequest.getHandle();
-         String filename = (String) handle_filename_map.get(handle);
-         if(filename_block_map.get(filename)!=null)
-            filename_block_map.get(filename).add(blockNum);
-         else
-            filename_block_map.put(filename, new ArrayList<Integer>(Arrays.asList(blockNum)));
+	 Hdfs.AssignBlockRequest assignBlockRequest = Hdfs.AssignBlockRequest.parseFrom(inp);
+	 int handle=assignBlockRequest.getHandle();
+	 String filename = (String) handle_filename_map.get(handle);
+	 if(filename_block_map.get(filename)!=null)
+	    filename_block_map.get(filename).add(blockNum);
+	 else
+	    filename_block_map.put(filename, new ArrayList<Integer>(Arrays.asList(blockNum)));
 
-         Hdfs.BlockLocations.Builder blockLocationsBuilder = Hdfs.BlockLocations.newBuilder();
+	 Hdfs.BlockLocations.Builder blockLocationsBuilder = Hdfs.BlockLocations.newBuilder();
 
-         Hdfs.DataNodeLocation.Builder dataNodeLocationBuilder = Hdfs.DataNodeLocation.newBuilder();
+	 Hdfs.DataNodeLocation.Builder dataNodeLocationBuilder = Hdfs.DataNodeLocation.newBuilder();
 
-         int datanode1, datanode2;
-         datanode1 = new Random().nextInt(dataNodeNum);
-         do {
-            datanode2 = new Random().nextInt(dataNodeNum);
-         } while(datanode2==datanode1);
+	 int datanode1, datanode2;
+	 datanode1 = new Random().nextInt(dataNodeNum);
+	 do {
+	    datanode2 = new Random().nextInt(dataNodeNum);
+	 } while(datanode2==datanode1);
 
-         System.out.println(datanode1 + " " + datanode2);
-         blockLocationsBuilder.setBlockNumber(blockNum);
+	 System.out.println(datanode1 + " " + datanode2);
+	 blockLocationsBuilder.setBlockNumber(blockNum);
 
-         dataNodeLocationBuilder.setIp(dataNodeIPs[datanode1]);
-         dataNodeLocationBuilder.setPort(dataNodePorts[datanode1]);
-         blockLocationsBuilder.addLocations(dataNodeLocationBuilder.build());
+	 dataNodeLocationBuilder.setIp(dataNodeIPs[datanode1]);
+	 dataNodeLocationBuilder.setPort(dataNodePorts[datanode1]);
+	 blockLocationsBuilder.addLocations(dataNodeLocationBuilder.build());
 
-         dataNodeLocationBuilder.setIp(dataNodeIPs[datanode2]);
-         dataNodeLocationBuilder.setPort(dataNodePorts[datanode2]);
-         blockLocationsBuilder.addLocations(dataNodeLocationBuilder.build());
+	 dataNodeLocationBuilder.setIp(dataNodeIPs[datanode2]);
+	 dataNodeLocationBuilder.setPort(dataNodePorts[datanode2]);
+	 blockLocationsBuilder.addLocations(dataNodeLocationBuilder.build());
 
-         block_datanode_map.put(blockNum, new ArrayList<Integer>(Arrays.asList(datanode1, datanode2)));
-         blockNum++;
 
-         Hdfs.AssignBlockResponse.Builder assignBlockResponseBuilder = Hdfs.AssignBlockResponse.newBuilder();
-         assignBlockResponseBuilder.setStatus(1);
-         assignBlockResponseBuilder.setNewBlock(blockLocationsBuilder.build());
-         assignBlockResponseBytes = assignBlockResponseBuilder.build().toByteArray();
+	 block_datanode_map.put(blockNum, new ArrayList<Integer>(Arrays.asList(datanode1, datanode2)));
+	 blockNum++;
+
+	 Hdfs.AssignBlockResponse.Builder assignBlockResponseBuilder = Hdfs.AssignBlockResponse.newBuilder();
+	 assignBlockResponseBuilder.setStatus(1);
+	 assignBlockResponseBuilder.setNewBlock(blockLocationsBuilder.build());
+	 assignBlockResponseBytes = assignBlockResponseBuilder.build().toByteArray();
       } catch(Exception e){
-         e.printStackTrace();
+	 e.printStackTrace();
       }
       return assignBlockResponseBytes;
    }
@@ -144,7 +171,7 @@ public class NameNode implements INameNode {
 	    }
 	 }
 
-	 Hdfs.BlockReportResponse.Builder brr_builder = Hdfs.BlockReportResponse.newBuilder().setStatus(0,1);
+	 Hdfs.BlockReportResponse.Builder brr_builder = Hdfs.BlockReportResponse.newBuilder().addStatus(1);
 	 return brr_builder.build().toByteArray();
       } catch (Exception e) {
 	 e.printStackTrace();
@@ -168,6 +195,7 @@ public class NameNode implements INameNode {
 
    public static void main(String args[]) {
       //TODO : set hostname property
+      File report = new File(FILE_LIST);
 
       try {
 	 NameNode obj = new NameNode();
@@ -182,5 +210,24 @@ public class NameNode implements INameNode {
 	 System.err.println("NameNode exception: " + e.toString());
 	 e.printStackTrace();
       }
+
+      try {
+	 BufferedReader br = new BufferedReader(new FileReader(report));
+	 String line, filename;
+	 filename = "";
+	 while ((line = br.readLine()) != null) {
+	    int blockNumber;
+
+	    String[] fileBlocks = line.split(" ");
+	    filename = fileBlocks[0];
+	    ArrayList<Integer> blocks = new ArrayList<Integer>();
+	    for(int i=1;i<fileBlocks.length;i++)
+	       blocks.add(Integer.parseInt(fileBlocks[i]));
+	    filename_block_map.put(filename, blocks);
+	 }
+      } catch(Exception e){
+	 e.printStackTrace();
+      }
+
    }
 }

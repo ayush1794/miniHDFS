@@ -98,9 +98,11 @@ public class Client {
 		    writeBlockRequestBuilder.addData(ByteString.copyFrom(readBytes));
 		    writeBlockRequestBuilder.setBlockInfo(assignBlockResponse.getNewBlock());
 		    byte[] writeBlockResponseBytes = dnStub.writeBlock(writeBlockRequestBuilder.build().toByteArray());
-			Hdfs.WriteBlockResponse writeBlockResponse = Hdfs.WriteBlockResponse.parseFrom(writeBlockResponseBytes);
+		    Hdfs.WriteBlockResponse writeBlockResponse = Hdfs.WriteBlockResponse.parseFrom(writeBlockResponseBytes);
 		  }
-
+		  Hdfs.CloseFileRequest.Builder closeFileRequestBuilder = Hdfs.CloseFileRequest.newBuilder();
+		  closeFileRequestBuilder.setHandle(openFileResponse.getHandle());
+		  stub.closeFile(closeFileRequestBuilder.build().toByteArray());
 	       }
 
 	    }

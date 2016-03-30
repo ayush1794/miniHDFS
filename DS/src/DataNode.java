@@ -107,12 +107,12 @@ public class DataNode implements IDataNode {
    }
 
    public byte[] writeBlock(byte[] inp) throws RemoteException{
-		
+
 		try{
 			File dir = new File("Blocks");
 			Hdfs.WriteBlockRequest writeBlockRequest = Hdfs.WriteBlockRequest.parseFrom(inp);
-			
-			
+
+
 			int blockNum = writeBlockRequest.getBlockInfo().getBlockNumber();
 			File blockFile = new File(dir, String.valueOf(blockNum));
 			FileOutputStream fos = new FileOutputStream(blockFile);
@@ -124,14 +124,14 @@ public class DataNode implements IDataNode {
 			fos.close();
 
             File report = new File(BLOCK_REPORT);
-            fos = new FileOutputStream(report);
- 
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-         
+            FileWriter fw = new FileWriter(report.getName(), true);
+
+            BufferedWriter bw = new BufferedWriter(fw);
+
             bw.write(Integer.toString(blockNum));
             bw.newLine();
             bw.close();
-            
+
 
 			return Hdfs.WriteBlockResponse.newBuilder().setStatus(1).build().toByteArray();
 		} catch( Exception e) {
@@ -144,6 +144,10 @@ public class DataNode implements IDataNode {
    public static void main(String args[]) {
 
 	  ID = Integer.parseInt(args[0]);
+
+	  File b = new File("Blocks");
+	  if(!b.exists())
+	     b.mkdirs();
 
 	  try {
 

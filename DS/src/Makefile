@@ -1,9 +1,8 @@
 JAVA = javac
 
 all:
-	 rmiregistry 1099 &
-	 $(JAVA) -cp .:./protobuf-java-2.5.0.jar *.java
+	 $(JAVA) -cp .:./protobuf-java-2.5.0.jar -d ../bin/ *.java
 
 clean:
 	 killall rmiregistry
-	 rm -rf  *.class
+	 rm -rf  ../bin/*.class

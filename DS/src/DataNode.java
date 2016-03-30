@@ -59,7 +59,6 @@ public class DataNode implements IDataNode {
 	 }
       }
    }
-}
 
    static class HeartBeatThread extends Thread{
 
@@ -85,7 +84,7 @@ public class DataNode implements IDataNode {
       }
    }
 
-   public synchronized byte[] readBlock(byte[] inp) throws RemoteException{
+   public byte[] readBlock(byte[] inp) throws RemoteException{
       File dir = new File("Blocks");
       Hdfs.ReadBlockResponse.Builder rbr_builder = Hdfs.ReadBlockResponse.newBuilder().setStatus(1);
       try{
@@ -107,7 +106,7 @@ public class DataNode implements IDataNode {
       return rbr_builder.build().toByteArray();
    }
 
-   public synchronized byte[] writeBlock(byte[] inp) throws RemoteException{
+   public byte[] writeBlock(byte[] inp) throws RemoteException{
       return null;
    }
 

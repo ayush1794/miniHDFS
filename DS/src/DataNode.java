@@ -15,7 +15,7 @@ public class DataNode implements IDataNode {
    private static final String BLOCK_REPORT = "block_report.txt";
    private static int ID;
 
-   class BlockReportThread extends Thread{
+   static class BlockReportThread extends Thread{
 
       public BlockReportThread(){
       }
@@ -24,12 +24,12 @@ public class DataNode implements IDataNode {
 	 while(true){
 	    File blk_rpt = new File(BLOCK_REPORT);
 	    String data = "";
-	    if (blk.exists() && blk.length()!=0){
+	    if (blk_rpt.exists() && blk_rpt.length()!=0){
 	       try{
-		  Hdfs.BufferedReader br = new BufferedReader(new FileReader(blk_rpt));
+		  BufferedReader br = new BufferedReader(new FileReader(blk_rpt));
 		  String blk_num;
 		  Hdfs.BlockReportRequest.Builder blk_rpt_req_builder = Hdfs.BlockReportRequest.newBuilder().setId(ID);
-		  while((blk_num = br.readline())!=null){
+		  while((blk_num = br.readLine())!=null){
 		     blk_rpt_req_builder.addBlockNumbers(Integer.parseInt(blk_num));
 		  }
 		  br.close();
@@ -39,7 +39,7 @@ public class DataNode implements IDataNode {
 		  byte[] blockReportResponse = stub.blockReport(blk_rpt_req_builder.build().toByteArray());
 
 		  Hdfs.BlockReportResponse res = Hdfs.BlockReportResponse.parseFrom(blockReportResponse);
-		  System.err.println("Block Report Response from NN " + String.valueOf(res.getStatus()));
+		  System.err.println("Block Report Response from NN " + String.valueOf(res.getStatusCount()));
 		  Thread.sleep(10000);
 
 	       } catch (Exception e) {
@@ -54,10 +54,11 @@ public class DataNode implements IDataNode {
 		  e.printStackTrace();
 	       }
 	    }
+	 }
       }
    }
 
-   class HeartBeatThread extends Thread{
+   static class HeartBeatThread extends Thread{
 
       public HeartBeatThread(){
       }
@@ -65,12 +66,12 @@ public class DataNode implements IDataNode {
       public void run(){
 	 try{
 	    while(true){
-	       Hdfs.HeartBeatRequest.Builder heartBeatRequestBuilder = Hdfs.HeartBeatRequest.newBuilder().setId(heartbeatReturnCode);
+	       Hdfs.HeartBeatRequest.Builder heartBeatRequestBuilder = Hdfs.HeartBeatRequest.newBuilder().setId(heartBeatReturnCode);
 	       Registry registry = LocateRegistry.getRegistry(NN_IP, NN_PORT);
 	       INameNode stub = (INameNode) registry.lookup("NN");
-	       byte[] heartBeatReponse = stub.heartBeat(heartBeatRequestBuilder.build().toByteArray());
+	       byte[] heartBeatResponse = stub.heartBeat(heartBeatRequestBuilder.build().toByteArray());
 
-	       Hdfs.HeartBeatRespone res = Hdfs.HeartBeatResponse.parseFrom(heartBeatResponse);
+	       Hdfs.HeartBeatResponse res = Hdfs.HeartBeatResponse.parseFrom(heartBeatResponse);
 	       System.err.println("Heart Beat Response from NN " + String.valueOf(res.getStatus()));
 	       Thread.sleep(10000);
 	    }
@@ -82,6 +83,15 @@ public class DataNode implements IDataNode {
    }
 
    public synchronized byte[] readBlock(byte[] inp) throws RemoteException{
+      File dir = new File("Blocks");
+      byte[] data = null;
+      try{
+	 int blk_num = Hdfs.ReadBlockRequest.parseFrom(inp).getBlockNumber();
+	 File block = new File(dir, String.valueOf(blk_num));
+	 FileInputStream fis = new FileInputStream(block);
+      } catch( Exception e) {
+	 e.printStackTrace();
+      }
       return null;
    }
 
@@ -91,7 +101,7 @@ public class DataNode implements IDataNode {
 
    public static void main(String args[]) {
 
-      ID = args[0];
+      ID = Integer.parseInt(args[0]);
 
       try {
 

@@ -13,7 +13,7 @@ public class NameNode implements INameNode {
    private static HashMap<Integer, ArrayList<Integer>> block_datanode_map;
    public int blockNum, fileNum;
    private static int dataNodeNum = 4;
-   private static String[] dataNodeIPs = {"127.0.0.1","127.0.0.1","127.0.0.1","127.0.0.1"};
+   private static String[] dataNodeIPs = {"10.1.35.127","127.0.0.1","10.1.35.127","127.0.0.1"};
    private static int[] dataNodePorts = {1099,1099,1099,1099};
 
    public NameNode() {
@@ -195,6 +195,7 @@ public class NameNode implements INameNode {
 
    public static void main(String args[]) {
       //TODO : set hostname property
+      System.setProperty("java.rmi.server.hostname", "10.1.35.147");
       File report = new File(FILE_LIST);
 
       try {

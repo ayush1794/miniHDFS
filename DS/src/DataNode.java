@@ -10,7 +10,7 @@ public class DataNode implements IDataNode {
 
    public DataNode() {}
    private static String TAG = "DN";
-   private static String NN_IP;
+   private static String NN_IP = "10.1.35.147";
    private static int NN_PORT = 1099;
    private static final int heartBeatReturnCode = 1;
    private static final String BLOCK_REPORT = "block_report.txt";
@@ -68,7 +68,7 @@ public class DataNode implements IDataNode {
 	  public void run(){
 	 try{
 		while(true){
-		   Hdfs.HeartBeatRequest.Builder heartBeatRequestBuilder = Hdfs.HeartBeatRequest.newBuilder().setId(heartBeatReturnCode);
+		   Hdfs.HeartBeatRequest.Builder heartBeatRequestBuilder = Hdfs.HeartBeatRequest.newBuilder().setId(ID);
 		   Registry registry = LocateRegistry.getRegistry(NN_IP, NN_PORT);
 		   INameNode stub = (INameNode) registry.lookup("NN");
 		   byte[] heartBeatResponse = stub.heartBeat(heartBeatRequestBuilder.build().toByteArray());
@@ -143,6 +143,7 @@ public class DataNode implements IDataNode {
 
    public static void main(String args[]) {
 
+      System.setProperty("java.rmi.server.hostname", "10.1.35.147");
 	  ID = Integer.parseInt(args[0]);
 
 	  File b = new File("Blocks");

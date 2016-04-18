@@ -9,7 +9,7 @@ import com.google.protobuf.ByteString;
 public class Client {
 
    private Client() {}
-   private static String NN_IP;
+   private static String NN_IP = "10.1.35.147";
    private static int NN_PORT = 1099;
    private static Registry NN_Registry, DN_Registry;
    private static String GET = "get";
@@ -28,6 +28,7 @@ public class Client {
 
    public static void main(String[] args){
 
+      System.setProperty("java.rmi.server.hostname", "10.1.35.147");
       Scanner scanner = new Scanner(System.in);
       // String host = (args.length < 1) ? null : args[0];
       try {
@@ -85,14 +86,21 @@ public class Client {
 		  int numBytes;
 
 		  FileInputStream input = new FileInputStream(new File(fileName));
-		  IDataNode dnStub = (IDataNode) NN_Registry.lookup("DN");
+		  //IDataNode dnStub = (IDataNode) NN_Registry.lookup("DN");
 		  while ((numBytes = input.read(readBytes)) != -1) {
 		    Hdfs.AssignBlockRequest.Builder assignBlockRequestBuilder = Hdfs.AssignBlockRequest.newBuilder();
 		    assignBlockRequestBuilder.setHandle(openFileResponse.getHandle());
 		    byte[] assignBlockRequestBytes = assignBlockRequestBuilder.build().toByteArray();
 		    byte[] assignBlockResponseBytes = stub.assignBlock(assignBlockRequestBytes);
+
 		    Hdfs.AssignBlockResponse assignBlockResponse = Hdfs.AssignBlockResponse.parseFrom(assignBlockResponseBytes);
-		    //Hdfs.BlockLocations blockLocations = assignBlockResponse.getNewBlock();
+		    Hdfs.BlockLocations blockLocations = assignBlockResponse.getNewBlock();
+		    Hdfs.DataNodeLocation dataNodeLocation = blockLocations.getLocations(0);
+		    String DN_IP =  dataNodeLocation.getIp();
+		    int DN_PORT = dataNodeLocation.getPort();
+		    Registry reg = LocateRegistry.getRegistry(DN_IP,DN_PORT);
+		    IDataNode dnStub = (IDataNode) reg.lookup("DN");
+
 
 		    Hdfs.WriteBlockRequest.Builder writeBlockRequestBuilder = Hdfs.WriteBlockRequest.newBuilder();
 		    writeBlockRequestBuilder.addData(ByteString.copyFrom(readBytes));
